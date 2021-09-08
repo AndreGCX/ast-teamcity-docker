@@ -1,0 +1,24 @@
+name: Release teamcity docker file
+on:
+  push:
+    branches:
+      - main
+jobs:
+  pull-and-build-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v2 
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          docker build . --tag ghcr.io/andregcx/ast-teamcity-docker:latest
+          docker push ghcr.io/andregcx/ast-teamcity-docker:latest
